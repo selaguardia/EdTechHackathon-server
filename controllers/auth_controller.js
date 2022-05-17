@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-// Will be used to securely handle user passwords
 const bcrypt = require("bcryptjs");
 const { User } = require("../models");
 
@@ -12,7 +11,6 @@ router.get('/signup', (req, res) => {
 // Sign Up POST Route
 router.post('/signup', async (req, res) => {
   try {
-    console.log('SIGNUP POST REACHED!')
     // check if user exists
     const foundUser = await User.exists({
       $or: [{ email: req.body.email },],
@@ -27,12 +25,8 @@ router.post('/signup', async (req, res) => {
     // if user DOES NOT exist
     // create a salt
     const salt = await bcrypt.genSalt(10);
-    console.log('salt', salt)
     // hash password
-    console.log('1',req.body)
-    console.log('2',req.body.password)
     const hash = await bcrypt.hash(req.body.password, salt);
-    console.log('reqbody', req.body);
     req.body.password = hash; 
 
     // create user
@@ -62,7 +56,7 @@ router.post('/login', async (req, res) => {
     // if user does not exist
     // redirect to register
     if (!foundUser) {
-      return res.redirect("/register");
+      return res.redirect("/signup");
     }
 
     // if user does exist
@@ -82,8 +76,7 @@ router.post('/login', async (req, res) => {
     req.session.currentUser = {
       id: foundUser._id,
     };
-    // redirect to menu
-    return res.redirect("/admin/menu");
+    return res.redirect("/dashboard"); //! might have to rename
   } catch (error) {
     console.log(error);
     return res.send(error);
