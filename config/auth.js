@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const SECRET = process.env.SECRET;
+const SECRET = process.env.SECRET_JWT_KEY;
 
 module.exports = function(req, res, next) {
   // Check for the token being sent in three different ways
