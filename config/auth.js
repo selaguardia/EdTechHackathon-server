@@ -1,22 +1,24 @@
-const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
+const SECRET = process.env.SECRET;
 
-require('dotenv').config();
-
-const connectionString = process.env.MONGODB_URI || 'mongodb://localhost:27017/Menu';
-
-mongoose.connect(connectionString, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-
-});
-
-mongoose.connection.on('connected', () => {
-  console.log('\x1b[36m%s\x1b[0m', `[${new Date().toLocaleTimeString()}] - MongoDB connected ... 🙌 🙌 🙌`); 
-});
-
-mongoose.connection.on('error', (error) => {
-  console.log('\x1b[31m%s\x1b[0m', 'MongoDB connection error 😥', error);
-});
-
-mongoose.connection.on('disconnected', () => console.log('\x1b[33m%s\x1b[0m', 'MongoDB disconnected  ⚡️ 🔌 ⚡️'));
-
+module.exports = function(req, res, next) {
+  // Check for the token being sent in three different ways
+  let token = req.get('Authorization') || req.query.token || req.body.token;
+  if (token) {
+    // Remove the 'Bearer ' if it was included in the token header
+    token = token.replace('Bearer ', '');
+    // Check if token is valid and not expired
+    jwt.verify(token, SECRET, function(err, decoded) {
+      if (err) {
+        next(err);
+        res.status(401).json({err})
+      } else {
+        // It's a valid token, so add user to req
+        req.user = decoded.user;    
+        next();
+      }
+    });
+  } else {
+    next();
+  }
+};

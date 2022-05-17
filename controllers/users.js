@@ -1,6 +1,6 @@
-const User = require('../models/user');
+const User = require('../models/User');
 const jwt = require('jsonwebtoken');
-const SECRET = process.env.SECRET;
+const SECRET_JWT_KEY = process.env.SECRET_JWT_KEY;
 
 module.exports = {
   signup,
@@ -45,7 +45,7 @@ async function login(req, res) {
 function createJWT(user) {
   return jwt.sign(
     {user}, // data payload
-    SECRET,
+    SECRET_JWT_KEY,
     {expiresIn: '24h'}
   );
 }
