@@ -18,6 +18,7 @@ app.use((req, res, next) => {
 require("./config/db.connection.js");
 
 // Middleware
+app.use(express.json());
 app.use(express.urlencoded({ extended: false })); // Body parser
 
 
