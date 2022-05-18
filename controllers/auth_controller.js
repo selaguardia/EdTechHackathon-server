@@ -11,6 +11,12 @@ router.get('/signup', (req, res) => {
 // Sign Up POST Route
 router.post('/signup', async (req, res) => {
   try {
+    // if password !== passwordTwo
+    // res.send(passwords do not match )
+    if (req.body.password !== req.body.passwordTwo) {
+      return res.send("Sorry, your passwords don't match!");
+    }
+    
     // check if user exists
     const foundUser = await User.exists({
       $or: [{ email: req.body.email },],
