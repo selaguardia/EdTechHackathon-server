@@ -37,7 +37,8 @@ router.post('/signup', async (req, res) => {
 
     // create user
     const createdUser = await User.create(req.body);
-    console.log("created User",createdUser);
+    console.log("******USER CREATED********",createdUser);
+    console.log(req.body)
 
     // redirect to login
     return res.redirect("/login");
